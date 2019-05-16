@@ -64,11 +64,11 @@ def blog():
 
 
 
-@app.route('/newpost', methods=['POST', 'GET'])
+@app.route('/new', methods=['POST', 'GET'])
 def new_post():
 
     if request.method == 'GET':
-        return render_template('newpost.html')
+        return render_template('new.html')
 
     if request.method == 'POST':
         title_entry = request.form['title']
@@ -83,7 +83,7 @@ def new_post():
             body_error = "Your Post Needs A Body!"
 
         if title_error or body_error:
-            return render_template('newpost.html', titlebase="New Entry", title_error = title_error, body_error = body_error, title=title_entry, body_name=body_entry)
+            return render_template('new.html', titlebase="New Entry", title_error = title_error, body_error = body_error, title=title_entry, body_name=body_entry)
 
         else:
             if len(title_entry) and len(body_entry) > 0:
@@ -121,7 +121,7 @@ def signup():
         
         existing_user = User.query.filter_by(username=username).first()
         if existing_user:
-            username_error = "That username already exists"
+            username_error = "Username already exists"
             return render_template('signup.html', username_error=username_error)
 
         if not existing_user:
@@ -129,7 +129,7 @@ def signup():
             db.session.add(new_user)
             db.session.commit()
             session['username'] = username
-            return redirect('/newpost')
+            return redirect('/new')
     else:
         return render_template('signup.html')
 
@@ -140,7 +140,7 @@ def login():
         if 'username' not in session:
             return render_template("login.html", page_title='Login')
         else:
-            return redirect('/newpost')
+            return redirect('/new')
 
     
     if request.method == 'POST':
@@ -150,7 +150,7 @@ def login():
 
         if user and user.password == password:
             session['username'] = username
-            return redirect('/newpost')
+            return redirect('/new')
 
         if user and user.password != password:
             password_error = "Incorrect Password"
@@ -166,7 +166,7 @@ def login():
 @app.route("/logout")
 def logout():
     del session['username']
-    return redirect('/')
+    return redirect('/blog')
 
 if __name__ == '__main__':
     app.run()
